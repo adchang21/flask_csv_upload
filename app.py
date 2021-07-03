@@ -9,12 +9,13 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import csv
 from oauth2client.service_account import ServiceAccountCredentials
+import numpy as np
 
 # Allows us to access Sheets API
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 # Change to your own spreadsheet ID
-SPREADSHEET_ID = '<add-spreadsheet-id>'
+SPREADSHEET_ID = '<1rALDWvLB-KNc4EgeCHUq4rjmM9Trzi4JBoBd3Dd55Ak>'
 # Change Sheet range here and it will change everywhere
 # Change sheet name here for different tabs 
 RANGE_NAME = "'Sheet1'!A:B"
@@ -70,17 +71,12 @@ def uploadFiles():
         print(uploaded_file)
         # finds local file
         with open(file_path, newline='') as csvfile:
-            reader = csv.reader(csvfile, delimiter=',', quotechar='"')
-            # skip first row (you can also keep it if you want to use it)
-            next(reader)
-
-            # iterate the rest of the rows
+            reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
             # row is a list of all the values in the row, in list format
             for row in reader:
                 # we choose which cols to pull
-                to_upload.append([row[0], row[2], row[4]])
+                to_upload.append([row['Network'], row['Profile'], row['Audience'], row['Impressions'], row['Engagements']])
         print(to_upload)
-
         # in the shape of https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values#ValueRange
         body_data={
             "range": RANGE_NAME,
